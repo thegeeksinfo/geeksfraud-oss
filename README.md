@@ -12,10 +12,28 @@ The open-source core of [GeeksFraud](https://geeksfraud.com): behavioral fraud d
 
 Fraud tools ask to run inside your checkout and see your customers' behavior. You should be able to read exactly what they collect. The SDK's privacy contract is enforced by a test that types secrets into every field type and fails the build if any reach the payload. Gateways' DPOs and PCI DSS 6.4.3 assessors can review the code instead of a datasheet.
 
+## Install
+
+The packages are published to GitHub Packages under the `@thegeeksinfo` scope. GitHub requires a token to install from its npm registry, even for public packages: create a personal access token with the `read:packages` scope, then:
+
+```bash
+echo "@thegeeksinfo:registry=https://npm.pkg.github.com" >> .npmrc
+echo "//npm.pkg.github.com/:_authToken=YOUR_TOKEN" >> ~/.npmrc
+npm install @thegeeksinfo/geeksfraud-engine @thegeeksinfo/geeksfraud-node
+```
+
+| Source package | Published as |
+|---|---|
+| `packages/engine` | `@thegeeksinfo/geeksfraud-engine` |
+| `packages/sdk-js` | `@thegeeksinfo/geeksfraud-js` (or load `geeksfraud.min.js` with its SRI hash) |
+| `packages/node` | `@thegeeksinfo/geeksfraud-node` |
+
+Releases are published automatically when a `v*` tag is pushed (`.github/workflows/publish.yml`).
+
 ## Quick look
 
 ```ts
-import { GeeksFraudEngine, PERSONAS } from '@geeksfraud/engine';
+import { GeeksFraudEngine, PERSONAS } from '@thegeeksinfo/geeksfraud-engine';
 
 const engine = new GeeksFraudEngine();
 const bot = PERSONAS.sbx_bot;

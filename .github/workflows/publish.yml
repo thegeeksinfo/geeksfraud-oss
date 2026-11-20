@@ -1,0 +1,33 @@
+name: publish
+# Publishes all three packages to GitHub Packages when a version tag (v*) is pushed.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          registry-url: https://npm.pkg.github.com
+          scope: '@thegeeksinfo'
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - run: npm test
+      # GitHub Packages only accepts packages scoped to the repository owner.
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for p in engine:geeksfraud-engine sdk-js:geeksfraud-js node:geeksfraud-node; do
+            dir="${p%%:*}"; name="${p##*:}"
+            (cd "packages/$dir" && npm pkg set name="@thegeeksinfo/$name" && npm publish)
+          done
