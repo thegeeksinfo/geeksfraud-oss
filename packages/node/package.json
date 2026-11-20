@@ -1,0 +1,26 @@
+{
+  "name": "@geeksfraud/node",
+  "version": "1.0.0",
+  "description": "Node.js client for the GeeksFraud Decision API \u2014 fail-open, idempotent, with identifier hashing and webhook verification.",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --import tsx --test test/*.test.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thegeeksinfo/geeksfraud-oss.git",
+    "directory": "packages/node"
+  },
+  "homepage": "https://github.com/thegeeksinfo/geeksfraud-oss#readme",
+  "bugs": "https://github.com/thegeeksinfo/geeksfraud-oss/issues"
+}

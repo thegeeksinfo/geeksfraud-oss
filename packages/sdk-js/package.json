@@ -1,0 +1,33 @@
+{
+  "name": "@geeksfraud/js",
+  "version": "1.0.0",
+  "description": "geeksfraud.js \u2014 privacy-first behavioral collector for checkouts. Timings only, never field values. < 25 KB, zero dependencies.",
+  "license": "Apache-2.0",
+  "main": "dist/geeksfraud.cjs",
+  "module": "dist/geeksfraud.mjs",
+  "browser": "dist/geeksfraud.min.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --import tsx --test test/*.test.ts"
+  },
+  "keywords": [
+    "fraud",
+    "behavioral-biometrics",
+    "bot-detection",
+    "checkout",
+    "pci-dss-6.4.3"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thegeeksinfo/geeksfraud-oss.git",
+    "directory": "packages/sdk-js"
+  },
+  "homepage": "https://github.com/thegeeksinfo/geeksfraud-oss#readme",
+  "bugs": "https://github.com/thegeeksinfo/geeksfraud-oss/issues"
+}

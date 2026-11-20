@@ -1,0 +1,37 @@
+{
+  "name": "@geeksfraud/engine",
+  "version": "0.1.0",
+  "description": "Explainable, zero-dependency fraud & financial-health decision engine: behavioral signals, mobile-money velocity, tenant rules, link-graph patterns and reason codes.",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --import tsx --test test/*.test.ts",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "fraud",
+    "risk",
+    "mobile-money",
+    "behavioral-biometrics",
+    "rules-engine",
+    "financial-health",
+    "africa"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thegeeksinfo/geeksfraud-oss.git",
+    "directory": "packages/engine"
+  },
+  "homepage": "https://github.com/thegeeksinfo/geeksfraud-oss#readme",
+  "bugs": "https://github.com/thegeeksinfo/geeksfraud-oss/issues"
+}
