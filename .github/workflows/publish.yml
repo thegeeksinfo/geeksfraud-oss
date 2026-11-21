@@ -29,5 +29,14 @@ jobs:
         run: |
           for p in engine:geeksfraud-engine sdk-js:geeksfraud-js node:geeksfraud-node; do
             dir="${p%%:*}"; name="${p##*:}"
-            (cd "packages/$dir" && npm pkg set name="@thegeeksinfo/$name" && npm publish)
+            (
+              cd "packages/$dir"
+              npm pkg set name="@thegeeksinfo/$name"
+              v=$(node -p "require('./package.json').version")
+              if npm view "@thegeeksinfo/$name@$v" version >/dev/null 2>&1; then
+                echo "@thegeeksinfo/$name@$v already published, skipping"
+              else
+                npm publish
+              fi
+            )
           done

@@ -21,5 +21,18 @@ const r = await engine.decide(request, {
 - **Link graph**: shared-device rings, mule fan-in, directed money cycles, proximity to confirmed fraud, supernode guard.
 - **Financial Health Score**: Spend, Save, Borrow, Plan, Protect pillars with nudges.
 - **Sandbox personas** for deterministic integration tests.
+- **Machine learning, dependency-free:** second-order gradient-boosted trees with per-prediction explanations, Isolation Forest for cold start, isotonic calibration, expected-cost threshold optimisation, PSI drift monitoring, and personalized-PageRank fraud proximity on the link graph. A trained `RiskModel` plugs into `decide()` in stacked mode.
+
+## Benchmark
+
+`npm run bench` simulates 80,000 mobile-money payments with hard legitimate look-alikes (cybercafé devices, password managers, honest new SIMs) and delayed chargeback labels, trains on mature labels only, and tests on later traffic. On that held-out period:
+
+| Model | ROC-AUC | Fraud caught at 1 % false positives |
+|---|---|---|
+| Expert rules only | 0.827 | 35.8 % |
+| GBDT stacked on expert signals | 0.963 | 89.4 % |
+| XGBoost 3.2, same data and settings (reference) | 0.962 | 89.4 % |
+
+The data is synthetic, so treat the absolute numbers as an upper bound; the comparison between algorithms is the point. Full method and limits: `bench/run.ts`, `bench/simulate.ts`.
 
 `npm test` runs the suite. Apache-2.0.

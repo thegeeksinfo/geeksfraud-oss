@@ -187,7 +187,11 @@ const detectors: Record<string, Detector> = {
 
   FG_LINKED_TO_FRAUD_NETWORK: ({ enrichment }) => {
     const d = enrichment.graph?.fraud_distance;
-    if (d === undefined || d === null || d === 0 || d > 2) return null;
+    const ppr = enrichment.graph?.fraud_proximity;
+    if (d === 0) return null; // the payer itself is labelled: FG_DEVICE_LINKED_TO_FRAUD covers it
+    // Prefer the PageRank mass when available: it weighs how many fraud neighbours and how close.
+    if (ppr !== undefined && ppr > 0.02) return { strength: clamp01(0.4 + ppr * 3), detail: { proximity: ppr, hops: d } };
+    if (d === undefined || d === null || d > 2) return null;
     return { strength: d === 1 ? 1 : 0.6, detail: { hops: d } };
   },
 
@@ -294,5 +298,7 @@ export function extractFeatures(
     hist_linked_fraud: b(enrichment.history ? !!(enrichment.history.device_fraud || enrichment.history.msisdn_fraud) : undefined),
     graph_fraud_distance: n(enrichment.graph?.fraud_distance),
     graph_fan_in: n(enrichment.graph?.beneficiary_fan_in),
+    graph_fraud_proximity: n(enrichment.graph?.fraud_proximity),
+    graph_cluster_size: n(enrichment.graph?.cluster_size),
   };
 }

@@ -124,6 +124,8 @@ export interface Enrichment {
   graph?: {
     /** Hops from this payer's identifiers to a confirmed-fraud node (0 = same node). */
     fraud_distance?: number | null;
+    /** Personalized-PageRank mass reaching confirmed-fraud identities, 0..1. */
+    fraud_proximity?: number;
     /** Distinct payers into the beneficiary over the lookback window. */
     beneficiary_fan_in?: number;
     /** True if the payment closes a directed money cycle. */
@@ -214,6 +216,8 @@ export interface TenantConfig {
   limits?: Partial<VelocityLimits>;
   /** Weight of an attached ML model when blending, 0..1. Default 0.7. */
   model_weight?: number;
+  /** 'blend' (default) noisy-ORs the model with the expert score; 'stacked' uses the model's calibrated probability as the score. */
+  model_mode?: 'blend' | 'stacked';
 }
 
 export interface VelocityLimits {

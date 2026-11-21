@@ -1,0 +1,188 @@
+{
+  "dataset": {
+    "payments": 80000,
+    "fraud_rate": 0.0362,
+    "train": 21000,
+    "valid": 7000,
+    "test": 14000,
+    "test_fraud": 481,
+    "train_labels_known": 0.853,
+    "simulation_seconds": 17.239
+  },
+  "results": [
+    {
+      "model": "A. Expert rules (current)",
+      "note": "noisy-OR of 25 hand-weighted signals",
+      "roc_auc": 0.8269,
+      "pr_auc": 0.4775,
+      "recall_at_1pct_fpr": 0.3576,
+      "value_recall_at_1pct_fpr": 0.2703,
+      "recall_at_0_5pct_fpr": 0.3576,
+      "recall_by_typology_at_1pct_fpr": {
+        "naive_bot": 1,
+        "stealth_bot": 0,
+        "farm": 0.634,
+        "ato": 0.073,
+        "mule": 0.283,
+        "friendly": 0
+      }
+    },
+    {
+      "model": "B. GBDT, raw features",
+      "note": "78 trees, 38 features",
+      "roc_auc": 0.9599,
+      "pr_auc": 0.8903,
+      "recall_at_1pct_fpr": 0.8586,
+      "value_recall_at_1pct_fpr": 0.9061,
+      "recall_at_0_5pct_fpr": 0.8274,
+      "recall_by_typology_at_1pct_fpr": {
+        "naive_bot": 1,
+        "stealth_bot": 1,
+        "farm": 1,
+        "ato": 0.78,
+        "mule": 0.75,
+        "friendly": 0.028
+      }
+    },
+    {
+      "model": "C. GBDT stacked on expert signals",
+      "note": "92 trees, 55 features",
+      "roc_auc": 0.9628,
+      "pr_auc": 0.908,
+      "recall_at_1pct_fpr": 0.894,
+      "value_recall_at_1pct_fpr": 0.9326,
+      "recall_at_0_5pct_fpr": 0.8732,
+      "recall_by_typology_at_1pct_fpr": {
+        "naive_bot": 1,
+        "stealth_bot": 1,
+        "farm": 1,
+        "ato": 0.854,
+        "mule": 0.95,
+        "friendly": 0
+      }
+    },
+    {
+      "model": "D. C + Isolation Forest",
+      "note": "anomaly score as a feature",
+      "roc_auc": 0.9617,
+      "pr_auc": 0.9041,
+      "recall_at_1pct_fpr": 0.8857,
+      "value_recall_at_1pct_fpr": 0.9254,
+      "recall_at_0_5pct_fpr": 0.8607,
+      "recall_by_typology_at_1pct_fpr": {
+        "naive_bot": 1,
+        "stealth_bot": 1,
+        "farm": 1,
+        "ato": 0.829,
+        "mule": 0.9,
+        "friendly": 0.028
+      }
+    },
+    {
+      "model": "E. Isolation Forest only (no labels)",
+      "note": "unsupervised, for brand-new tenants",
+      "roc_auc": 0.8793,
+      "pr_auc": 0.498,
+      "recall_at_1pct_fpr": 0.4054,
+      "value_recall_at_1pct_fpr": 0.3773,
+      "recall_at_0_5pct_fpr": 0.3742,
+      "recall_by_typology_at_1pct_fpr": {
+        "naive_bot": 1,
+        "stealth_bot": 0.028,
+        "farm": 0.764,
+        "ato": 0.122,
+        "mule": 0.267,
+        "friendly": 0.028
+      }
+    }
+  ],
+  "best_model": "D. C + Isolation Forest",
+  "calibration": {
+    "raw": {
+      "brier": 0.00733,
+      "ece": 0.0058
+    },
+    "isotonic": {
+      "brier": 0.00771,
+      "ece": 0.0073
+    }
+  },
+  "thresholds": {
+    "chosen_on_validation": {
+      "review": 8,
+      "reject": 76
+    },
+    "test_cost_UGX": {
+      "approve_everything": 101096107,
+      "expert_default_50_80": 51453214,
+      "best_model_cost_optimal": 9075014
+    },
+    "best_model_test": {
+      "review_rate": 0.0197,
+      "reject_rate": 0.0209,
+      "fraud_caught": 0.8877,
+      "false_positive_rate": 0.0001
+    },
+    "expert_default_test": {
+      "review_rate": 0.1543,
+      "reject_rate": 0.0896,
+      "fraud_caught": 0.6944,
+      "false_positive_rate": 0.0718
+    }
+  },
+  "training_seconds": {
+    "gbdt_raw": 1.919,
+    "gbdt_stacked": 2.561
+  },
+  "inference_microseconds_per_prediction": 3.96,
+  "top_features_stacked": [
+    {
+      "feature": "typing_hold_mean",
+      "splits": 144
+    },
+    {
+      "feature": "form_first_input_ms",
+      "splits": 134
+    },
+    {
+      "feature": "amount_vs_p95",
+      "splits": 133
+    },
+    {
+      "feature": "typing_flight_mean",
+      "splits": 120
+    },
+    {
+      "feature": "typing_flight_cv",
+      "splits": 100
+    },
+    {
+      "feature": "session_ms",
+      "splits": 97
+    },
+    {
+      "feature": "acct_age_days",
+      "splits": 92
+    },
+    {
+      "feature": "amount_minor",
+      "splits": 69
+    },
+    {
+      "feature": "typing_backspace_ratio",
+      "splits": 59
+    },
+    {
+      "feature": "expert_p",
+      "splits": 55
+    },
+    {
+      "feature": "form_autofill_count",
+      "splits": 55
+    },
+    {
+      "feature": "typing_keys",
+      "splits": 53
+    }
+  ]
+}

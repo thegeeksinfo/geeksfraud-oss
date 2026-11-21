@@ -1,7 +1,7 @@
 {
   "name": "@geeksfraud/engine",
-  "version": "0.1.0",
-  "description": "Explainable, zero-dependency fraud & financial-health decision engine: behavioral signals, mobile-money velocity, tenant rules, link-graph patterns and reason codes.",
+  "version": "0.2.0",
+  "description": "Explainable, zero-dependency fraud and financial-health decision engine: behavioral signals, mobile-money velocity, rules, link graph, gradient-boosted models validated against XGBoost.",
   "license": "Apache-2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,7 +13,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "node --import tsx --test test/*.test.ts",
-    "lint": "tsc -p tsconfig.json --noEmit"
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "bench": "tsx bench/run.ts --export && python3 bench/xgb_reference.py"
   },
   "keywords": [
     "fraud",

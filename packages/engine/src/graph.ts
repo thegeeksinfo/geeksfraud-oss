@@ -149,6 +149,57 @@ export class LinkGraph {
     return null;
   }
 
+  /**
+   * Fraud proximity by personalized PageRank (Andersen–Chung–Lang local push).
+   * Random walks restart at the payer's identities; the score is the walk mass that
+   * lands on identities labelled fraud. Unlike hop distance it grows with *how many*
+   * fraudulent neighbours there are and how tightly connected they are, and its cost
+   * is bounded by `maxPushes` regardless of graph size. Shared IPs are not traversed.
+   */
+  fraudProximity(e: Entities, opts: { alpha?: number; eps?: number; maxPushes?: number } = {}): number {
+    const alpha = opts.alpha ?? 0.15;
+    const eps = opts.eps ?? 1e-4;
+    const maxPushes = opts.maxPushes ?? 4_000;
+    const seeds = this.entityIds(e).filter((id) => this.nodes.has(id) && !id.startsWith('ip:'));
+    if (!seeds.length) return 0;
+    const p = new Map<NodeId, number>();
+    const r = new Map<NodeId, number>();
+    for (const s of seeds) r.set(s, 1 / seeds.length);
+    const queue: NodeId[] = [...seeds];
+    const nbCache = new Map<NodeId, NodeId[]>();
+    const nb = (id: NodeId) => {
+      let v = nbCache.get(id);
+      if (!v) {
+        v = this.neighbours(id).filter((x) => !x.startsWith('ip:'));
+        nbCache.set(id, v);
+      }
+      return v;
+    };
+    let pushes = 0;
+    while (queue.length && pushes < maxPushes) {
+      const u = queue.shift()!;
+      const ru = r.get(u) ?? 0;
+      const ns = nb(u);
+      const deg = Math.max(1, ns.length);
+      if (ru < eps * deg) continue;
+      pushes++;
+      p.set(u, (p.get(u) ?? 0) + alpha * ru);
+      r.set(u, 0);
+      if (!ns.length) continue;
+      const share = ((1 - alpha) * ru) / ns.length;
+      for (const v of ns) {
+        const before = r.get(v) ?? 0;
+        const after = before + share;
+        r.set(v, after);
+        const dv = Math.max(1, nb(v).length);
+        if (before < eps * dv && after >= eps * dv) queue.push(v);
+      }
+    }
+    let mass = 0;
+    for (const [id, v] of p) if (this.nodes.get(id)?.label === 'fraud' && !seeds.includes(id)) mass += v;
+    return Math.min(1, mass);
+  }
+
   /** Distinct payers that sent money to a beneficiary within the window. */
   fanIn(beneficiary: string, windowMs: number, now: number = Date.now()): number {
     const list = this.inbound.get(LinkGraph.id('account', beneficiary)) ?? [];
@@ -210,6 +261,7 @@ export class LinkGraph {
   enrichment(e: Entities, now: number = Date.now()) {
     return {
       fraud_distance: this.fraudDistance(e),
+      fraud_proximity: +this.fraudProximity(e).toFixed(4),
       beneficiary_fan_in: e.beneficiary ? this.fanIn(e.beneficiary, 24 * 3_600_000, now) : 0,
       closes_cycle: !!this.closesCycle(e, 4, undefined, now),
       cluster_size: this.clusterIdentityCount(e),

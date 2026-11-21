@@ -112,9 +112,15 @@ export class GeeksFraudEngine {
     let modelVersion = `${ENGINE_VERSION}+rules`;
     if (opts.model) {
       try {
-        const mp = Math.min(1, Math.max(0, await opts.model.score(features)));
-        const w = tenant.model_weight ?? 0.7;
-        p = 1 - (1 - p) * (1 - mp * w);
+        if (tenant.model_mode === 'stacked') {
+          // The model sees raw features plus every expert signal and returns a calibrated probability.
+          const { stackedFeatures } = await import('./ml/model');
+          p = Math.min(1, Math.max(0, await opts.model.score(stackedFeatures(features, p, hits))));
+        } else {
+          const mp = Math.min(1, Math.max(0, await opts.model.score(features)));
+          const w = tenant.model_weight ?? 0.7;
+          p = 1 - (1 - p) * (1 - mp * w);
+        }
         modelVersion = `${ENGINE_VERSION}+${opts.model.version}`;
       } catch {
         modelVersion = `${ENGINE_VERSION}+rules(model_unavailable)`;
